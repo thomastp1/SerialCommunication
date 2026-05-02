@@ -54,7 +54,134 @@ namespace SerialCommunication
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            // abc def ghi jkl
+            try
+            {
+                if (serialPortarduino.IsOpen) 
+                {
+                    // ik heb een verbinding -> de gebruiker wil deze verbreken
+                    serialPortarduino.Close();
+                    radioButtonVerbonden.Checked = false;
+                    buttonConnect.Text = "Connect";
+                    labelStatus.Text = "Status: Disconnected";
+                }
+                else
+                {
+                    //ik heb geen verbinding -> de gebruiker wil verbinding maken
+                    serialPortarduino.PortName = (string)comboBoxPoort.SelectedItem;
+                    serialPortarduino.BaudRate = Int32.Parse((string)comboBoxBaudrate.SelectedItem);
+                    serialPortarduino.DataBits = (int)numericUpDownDatabits.Value;
+
+                    if (radioButtonParityEven.Checked) serialPortarduino.Parity = Parity.Even;
+                    else if (radioButtonParityOdd.Checked) serialPortarduino.Parity = Parity.Odd;
+                    else if (radioButtonParityNone.Checked) serialPortarduino.Parity = Parity.None;
+                    else if (radioButtonParityMark.Checked) serialPortarduino.Parity = Parity.Mark;
+                    else if (radioButtonParitySpace.Checked) serialPortarduino.Parity = Parity.Space;
+
+                    if (radioButtonStopbitsNone.Checked) serialPortarduino.StopBits = StopBits.None;
+                    else if (radioButtonStopbitsOne.Checked) serialPortarduino.StopBits = StopBits.One;
+                    else if (radioButtonStopbitsOnePointFive.Checked) serialPortarduino.StopBits = StopBits.OnePointFive;
+                    else if (radioButtonStopbitsTwo.Checked) serialPortarduino.StopBits = StopBits.Two;
+
+
+                    if (radioButtonHandshakeNone.Checked) serialPortarduino.Handshake = Handshake.None;
+                    else if (radioButtonHandshakeRTS.Checked) serialPortarduino.Handshake = Handshake.RequestToSend;
+                    else if (radioButtonHandshakeRTSXonXoff.Checked) serialPortarduino.Handshake = Handshake.RequestToSendXOnXOff;
+                    else if (radioButtonHandshakeXonXoff.Checked) serialPortarduino.Handshake = Handshake.XOnXOff;
+
+                    serialPortarduino.RtsEnable = checkBoxRtsEnable.Checked;
+                    serialPortarduino.DtrEnable = checkBoxDtrEnable.Checked;
+
+                    serialPortarduino.Open();
+                    string commando = "ping";
+                    serialPortarduino.WriteLine(commando);
+                    string antwoord = serialPortarduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    if (antwoord == "pong")
+                    {
+                        radioButtonVerbonden.Checked = true;
+                        buttonConnect.Text = "disconnect";
+                        labelStatus.Text = "status: connected";
+                    }
+                    else
+                    {
+                        serialPortarduino.Close();
+                        labelStatus.Text = "error: verkeerd antwoord";
+                    }
+
+                }
+            
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortarduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+
+        }
+
+        private void checkBoxDigital2_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+             if (serialPortarduino.IsOpen)
+                {
+                    string commando; //set d2 high of low
+                    if (checkBoxDigital2.Checked) commando = "set d2 high";
+                    else commando = "set d2 low";
+                    serialPortarduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortarduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void checkBoxDigital3_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortarduino.IsOpen)
+                {
+                    string commando; //set d3 high of low
+                    if (checkBoxDigital3.Checked) commando = "set d3 high";
+                    else commando = "set d3 low";
+                    serialPortarduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortarduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void checkBoxDigital4_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortarduino.IsOpen)
+                {
+                    string commando; //set d4 high of low
+                    if (checkBoxDigital4.Checked) commando = "set d4 high";
+                    else commando = "set d4 low";
+                    serialPortarduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortarduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
         }
     }
 }
