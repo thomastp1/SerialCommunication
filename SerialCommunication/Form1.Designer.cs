@@ -92,6 +92,7 @@
             this.serialPortarduino = new System.IO.Ports.SerialPort(this.components);
             this.timerOefening3 = new System.Windows.Forms.Timer(this.components);
             this.timeroefening4 = new System.Windows.Forms.Timer(this.components);
+            this.timeroefening5 = new System.Windows.Forms.Timer(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageInstellingen.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -880,6 +881,11 @@
             this.timeroefening4.Interval = 1000;
             this.timeroefening4.Tick += new System.EventHandler(this.timeroefening4_Tick);
             // 
+            // timeroefening5
+            // 
+            this.timeroefening5.Interval = 1000;
+            this.timeroefening5.Tick += new System.EventHandler(this.timeroefening5_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -994,6 +1000,7 @@
         private System.IO.Ports.SerialPort serialPortarduino;
         private System.Windows.Forms.Timer timerOefening3;
         private System.Windows.Forms.Timer timeroefening4;
+        private System.Windows.Forms.Timer timeroefening5;
     }
 }
 

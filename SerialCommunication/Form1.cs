@@ -245,6 +245,7 @@ namespace SerialCommunication
         {
             timerOefening3.Enabled = tabControl.SelectedIndex == 3;
             timeroefening4.Enabled = tabControl.SelectedIndex == 4;
+            timeroefening5.Enabled = tabControl.SelectedIndex == 5;
 
         }
 
@@ -311,6 +312,56 @@ namespace SerialCommunication
                 buttonConnect.Text = "Connect";
             }
             
+        }
+
+        private void timeroefening5_Tick(object sender, EventArgs e)
+        {
+          try
+            {
+                if (serialPortarduino.IsOpen)
+                {
+                    // ── GEWENSTE TEMPERATUUR (analoge pin 0) ──────────────
+                    serialPortarduino.ReadExisting();
+                    serialPortarduino.WriteLine("get a0");
+                    string antwoordPin0 = serialPortarduino.ReadLine();
+                    antwoordPin0 = antwoordPin0.TrimEnd();
+                    antwoordPin0 = antwoordPin0.Substring(3);   // "a0 512" → "512"
+                    antwoordPin0 = antwoordPin0.Trim();
+
+                    int rawPin0 = Int32.Parse(antwoordPin0);
+
+                    // Herschalen: 0..1023 → 5..45 °C
+                    double gewensteTemp = (40.0 / 1023.0) * rawPin0 + 5.0;
+                    labelGewensteTemp.Text = gewensteTemp.ToString("F1") + " °C";
+
+                    // ── HUIDIGE TEMPERATUUR (analoge pin 1 – LM35) ────────
+                    serialPortarduino.ReadExisting();
+                    serialPortarduino.WriteLine("get a1");
+                    string antwoordPin1 = serialPortarduino.ReadLine();
+                    antwoordPin1 = antwoordPin1.TrimEnd();
+                    antwoordPin1 = antwoordPin1.Substring(3);   // "a1 123" → "123"
+                    antwoordPin1 = antwoordPin1.Trim();
+
+                    int rawPin1 = Int32.Parse(antwoordPin1);
+
+                    // Herschalen: 0..1023 → 0..500 °C
+                    double huidigeTemp = (500.0 / 1023.0) * rawPin1;
+                    labelHuidigeTemp.Text = huidigeTemp.ToString("F1") + " °C";
+
+                    // ── LED AANSTUREN (digitale pin 2) ────────────────────
+                    if (huidigeTemp < gewensteTemp)
+                        serialPortarduino.WriteLine("set d2 1"); // LED aan
+                    else
+                        serialPortarduino.WriteLine("set d2 0"); // LED uit
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortarduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
         }
     }
 }
